@@ -6,6 +6,8 @@ import javax.inject.Inject
 class MovieUseCase @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
+    suspend fun searchMovie(query: ArrayList<String>) =
+        movieRepository.getMovies(query)
     suspend fun searchMovie(query: String) =
         movieRepository.getMovies(query)
 
