@@ -25,8 +25,12 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,6 +39,7 @@ import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ViewCompositionStrategy
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -47,6 +52,7 @@ import com.limeunju.android_netflix.common.darkColorScheme
 import com.limeunju.android_netflix.data.model.response.Items
 import com.limeunju.android_netflix.data.model.response.MovieResponse
 import com.limeunju.android_netflix.databinding.FragmentHomeBinding
+import com.limeunju.android_netflix.view.AppBar
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -54,7 +60,6 @@ import kotlinx.coroutines.launch
 class HomeFragment : Fragment() {
 
     private var _binding : FragmentHomeBinding? = null
-    private val viewmodel: HomeViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,67 +74,27 @@ class HomeFragment : Fragment() {
             // is destroyed
             setViewCompositionStrategy(ViewCompositionStrategy.DisposeOnViewTreeLifecycleDestroyed)
             setContent {
-                val scrollState = rememberScrollState()
                 // In Compose world
                 MaterialTheme(colors = darkColorScheme) {
-                    MovieList()
-                }
-            }
-        }
-        return view
-    }
-
-    @Composable
-    fun MovieList() {
-        val movies:Map<String, MovieResponse>? by viewmodel.recomMovies.collectAsState(null)
-
-        LazyColumn{
-            movies?.forEach { (query, movies) ->
-                item{
                     Column {
-                        Text("<$query> 과 관련된 영화")
-                        LazyHorizontalGrid(
-                            rows = GridCells.Fixed(1),
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(200.dp)
-                        ){
-                            itemsIndexed(movies.items) {index, item ->
-                                MovieImage(item)
+                        AppBar(
+                            title = {Text("")},
+                            actions = {
+                                IconButton(onClick = { }){
+                                    Icon(
+                                       imageVector = Icons.Filled.Search,
+                                       contentDescription = "Search",
+                                        tint = Color.White
+                                    )
+                                }
                             }
-                        }
+                        )
+                        MovieList()
                     }
                 }
             }
         }
-
-
-    }
-
-    @Composable
-    fun MovieImage(
-        item: Items,
-        modifier: Modifier = Modifier
-    ){
-        Card (
-            elevation = 5.dp,
-            modifier = modifier
-                .wrapContentHeight()
-                .wrapContentWidth()
-        ){
-            Box(modifier = modifier.height(200.dp)){
-                AsyncImage(
-                    model = item.image,
-                    contentDescription = null,
-                    modifier =
-                    modifier
-                        .height(200.dp)
-                        .width(100.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-                )
-            }
-        }
+        return view
     }
 
     override fun onDestroyView() {
