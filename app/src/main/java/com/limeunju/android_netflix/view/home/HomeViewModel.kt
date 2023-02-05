@@ -30,8 +30,7 @@ class HomeViewModel @Inject constructor(
 
     val recomMovies = flow{
         emit(movieUseCase.searchMovie(MOVIE_KEYWORD))
-    }
-    .map { movies ->
+    }.map { movies ->
         movies.toMutableMap().values.removeIf{ it.items.isEmpty() }
         movies
     }.flowOn(Dispatchers.IO)

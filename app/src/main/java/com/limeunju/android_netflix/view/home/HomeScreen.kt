@@ -13,17 +13,41 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.Card
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import coil.compose.AsyncImage
 import com.limeunju.android_netflix.data.model.response.Items
 import com.limeunju.android_netflix.data.model.response.MovieResponse
+import com.limeunju.android_netflix.view.AppBar
 
+@Composable
+fun HomeScreen(){
+    Column {
+        AppBar(
+            title = {Text("")},
+            actions = {
+                IconButton(onClick = { }){
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search",
+                        tint = Color.White
+                    )
+                }
+            }
+        )
+        MovieList()
+    }
+}
 
 @Composable
 fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
@@ -77,3 +101,4 @@ fun MovieImage(
         }
     }
 }
+
