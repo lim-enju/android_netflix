@@ -29,14 +29,19 @@ import coil.compose.AsyncImage
 import com.limeunju.android_netflix.data.model.response.Items
 import com.limeunju.android_netflix.data.model.response.MovieResponse
 import com.limeunju.android_netflix.view.AppBar
+import com.limeunju.android_netflix.view.navigation.HomeNavItem
 
 @Composable
-fun HomeScreen(){
+fun HomeScreen(
+    selectItem: (HomeNavItem) -> Unit
+){
     Column {
         AppBar(
             title = {Text("")},
             actions = {
-                IconButton(onClick = { }){
+                IconButton(onClick = {
+                    selectItem(HomeNavItem.Search)
+                }){
                     Icon(
                         imageVector = Icons.Filled.Search,
                         contentDescription = "Search",

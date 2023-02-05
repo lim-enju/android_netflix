@@ -25,6 +25,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.limeunju.android_netflix.R
 import com.limeunju.android_netflix.view.home.HomeScreen
+import com.limeunju.android_netflix.view.search.SearchScreen
 
 @Composable
 fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
@@ -34,13 +35,22 @@ fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
         startDestination = BottomNavItem.Home.screenRoute
     ) {
         composable(BottomNavItem.Home.screenRoute) {
-            HomeScreen()
+            HomeScreen(){ screen ->
+                when(screen){
+                    HomeNavItem.Search -> navController.navigate(HomeNavItem.Search.screenRoute)
+                }
+            }
         }
         composable(BottomNavItem.Game.screenRoute) {
-            HomeScreen()
+            HomeScreen(){}
         }
         composable(BottomNavItem.Feed.screenRoute) {
-            HomeScreen()
+            HomeScreen(){}
+        }
+        composable(
+            route = HomeNavItem.Search.screenRoute
+        ){
+            SearchScreen()
         }
     }
 }
@@ -57,31 +67,33 @@ fun BottomBarNavigation(navController: NavController) {
     )
 
 
-        BottomNavigation(
-            backgroundColor = Color.White,
-            contentColor = Color(0xFF3F414E)
-        ) {
-            items.forEach { item ->
-                BottomNavigationItem(
-                    icon = {
-                        Icon(
-                            painter = painterResource(item.icon),
-                            contentDescription = stringResource(item.title),
-                            modifier = Modifier.width(26.dp).height(26.dp)
-                        )
-                    },
-                    selected = currentRoute == item.screenRoute,
-                    onClick = {
-                        navController.navigate(item.screenRoute) {
-                            navController.graph.startDestinationRoute?.let {
-                                popUpTo(it) { saveState = true }
-                            }
-                            launchSingleTop = true
-                            restoreState = true
+    BottomNavigation(
+        backgroundColor = Color.White,
+        contentColor = Color(0xFF3F414E)
+    ) {
+        items.forEach { item ->
+            BottomNavigationItem(
+                icon = {
+                    Icon(
+                        painter = painterResource(item.icon),
+                        contentDescription = stringResource(item.title),
+                        modifier = Modifier
+                            .width(26.dp)
+                            .height(26.dp)
+                    )
+                },
+                selected = currentRoute == item.screenRoute,
+                onClick = {
+                    navController.navigate(item.screenRoute) {
+                        navController.graph.startDestinationRoute?.let {
+                            popUpTo(it) { saveState = true }
                         }
-                    },
-                    label = { Text(stringResource(id = item.title), fontSize = 9.sp) },
-                )
+                        launchSingleTop = true
+                        restoreState = true
+                    }
+                },
+                label = { Text(stringResource(id = item.title), fontSize = 9.sp) },
+            )
         }
     }
 }
