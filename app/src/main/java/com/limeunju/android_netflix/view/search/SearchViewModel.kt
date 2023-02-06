@@ -26,7 +26,9 @@ class SearchViewModel @Inject constructor(
 
     val searchMovies =
         snapshotFlow { inputQuery }
-            .mapLatest { movieUseCase.searchMovie(inputQuery) }
+            .mapLatest {
+                movieUseCase.searchMovie(inputQuery)
+            }
             .flowOn(Dispatchers.IO)
 
 }
