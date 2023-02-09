@@ -5,9 +5,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.cachedIn
 import com.limeunju.android_netflix.data.usecase.MovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import javax.inject.Inject
@@ -26,9 +29,8 @@ class SearchViewModel @Inject constructor(
 
     val searchMovies =
         snapshotFlow { inputQuery }
-            .mapLatest {
-                movieUseCase.searchMovie(inputQuery)
+            .flatMapLatest {
+                movieUseCase.getMovies(inputQuery).cachedIn(viewModelScope)
             }
-            .flowOn(Dispatchers.IO)
 
 }

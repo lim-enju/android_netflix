@@ -56,29 +56,27 @@ fun HomeScreen(
 
 @Composable
 fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
-    val movies:Map<String, MovieResponse>? by viewmodel.recomMovies.collectAsState(null)
-
-    LazyColumn{
-        movies?.forEach { (query, movies) ->
-            item{
-                Column {
-                    Text("<$query> 과 관련된 영화")
-                    LazyHorizontalGrid(
-                        rows = GridCells.Fixed(1),
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(200.dp)
-                    ){
-                        itemsIndexed(movies.items) {index, item ->
-                            MovieImage(item)
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-
+//    val movies:Map<String, MovieResponse>? by viewmodel.recomMovies.collectAsState(null)
+//
+//    LazyColumn{
+//        movies?.forEach { (query, movies) ->
+//            item{
+//                Column {
+//                    Text("<$query> 과 관련된 영화")
+//                    LazyHorizontalGrid(
+//                        rows = GridCells.Fixed(1),
+//                        modifier = Modifier
+//                            .fillMaxWidth()
+//                            .height(200.dp)
+//                    ){
+//                        itemsIndexed(movies.items) {index, item ->
+//                            MovieImage(item)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 }
 
 @Composable

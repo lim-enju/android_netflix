@@ -14,8 +14,6 @@ interface ApiService {
         @Query("query") query:String,
         @Query("display") display: Int?,
         @Query("start") start: Int?,
-        @Query("genre") genre: String?,
-        @Query("country") country: String?,
         @Query("yearfrom") yearfrom: Int?,
         @Query("yearto") yearto: Int?
     ): MovieResponse?

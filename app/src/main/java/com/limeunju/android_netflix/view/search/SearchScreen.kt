@@ -15,7 +15,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.paging.compose.itemsIndexed
 import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -37,6 +37,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.compose.LazyPagingItems
+import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
 import com.limeunju.android_netflix.R
 import com.limeunju.android_netflix.data.model.response.Items
@@ -48,7 +50,7 @@ import com.limeunju.android_netflix.view.navigation.HomeNavItem
 
 @Composable
 fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel()) {
-    val movies by viewmodel.searchMovies.collectAsState(null)
+    val movies = viewmodel.searchMovies.collectAsLazyPagingItems()
 
     Scaffold(
         topBar = { SearchAppBar() }
@@ -102,12 +104,12 @@ fun SearchBar(
 }
 
 @Composable
-fun SearchedMovieGrid(movies: MovieResponse?){
-    LazyVerticalGrid(
-        columns = GridCells.Adaptive(minSize = 128.dp)
+fun SearchedMovieGrid(movies: LazyPagingItems<Items>){
+    LazyColumn(
+//        columns = GridCells.Adaptive(minSize = 128.dp)
     ){
-        itemsIndexed(movies?.items?: arrayListOf()){ index, movie ->
-            SearchedItem(movie)
+        itemsIndexed(movies) {index, item ->
+            SearchedItem(item!!)
         }
     }
 }
