@@ -1,5 +1,6 @@
 package com.limeunju.android_netflix.view.search
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -13,7 +14,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyItemScope
 import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyGridScope
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.paging.compose.itemsIndexed
 import androidx.compose.material.Card
@@ -37,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
@@ -50,6 +54,7 @@ import com.limeunju.android_netflix.view.navigation.HomeNavItem
 
 @Composable
 fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel()) {
+    //collectAsLazyPagingItems: PagingData의 flow collect
     val movies = viewmodel.searchMovies.collectAsLazyPagingItems()
 
     Scaffold(
@@ -59,7 +64,7 @@ fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel()) {
             SearchBar(
                 paddingValues = paddingValues
             )
-            SearchedMovieGrid(movies)
+            SearchedScreen(movies)
         }
     }
 
@@ -104,32 +109,48 @@ fun SearchBar(
 }
 
 @Composable
-fun SearchedMovieGrid(movies: LazyPagingItems<Items>){
-    LazyColumn(
-//        columns = GridCells.Adaptive(minSize = 128.dp)
-    ){
-        itemsIndexed(movies) {index, item ->
-            SearchedItem(item!!)
+fun SearchedScreen(movies: LazyPagingItems<Items>, modifier: Modifier = Modifier){
+    when(movies.loadState.refresh){
+        LoadState.Loading -> {}
+        is LoadState.Error -> {}
+        else -> {
+            SearchedMovieGrid(movies)
         }
     }
 }
 
 @Composable
+fun SearchedMovieGrid(movies: LazyPagingItems<Items>){
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+    ){
+        items(movies.itemCount)
+        { index ->
+            movies[index]?.let {
+                SearchedItem(it)
+            }
+        }
+    }
+}
+
+
+@Composable
 fun SearchedItem(item: Items, modifier: Modifier = Modifier){
     Card (
-        elevation = 5.dp,
         modifier = modifier
             .wrapContentHeight()
-            .wrapContentWidth()
+            .fillMaxWidth()
     ){
-        Box(modifier = modifier.height(200.dp)){
+        Box(modifier =
+            modifier
+                .height(180.dp)
+                .fillMaxWidth()
+        ){
             AsyncImage(
                 model = item.image,
                 contentDescription = null,
                 modifier =
                 modifier
-                    .height(200.dp)
-                    .width(100.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
             )

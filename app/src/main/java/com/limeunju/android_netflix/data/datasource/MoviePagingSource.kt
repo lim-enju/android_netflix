@@ -15,11 +15,12 @@ class MoviePagingSource constructor(
     private val query:String,
     private val movieRepository: MovieRepository
 ): PagingSource<Int, Items>() {
+    //LoadParams: 로드할 키와 항목 수
+    //LoadResult: 로드 작업의 결과
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Items> {
         return try {
             val nextPageNumber = params.key ?: 1
-            val response = movieRepository.getMovies(query)
-            Log.d("EJLIM", "Searched $query ${response?.items?.size}")
+            val response = movieRepository.getMovies(query, start = nextPageNumber)
             LoadResult.Page(
                 data = response?.items?: arrayListOf(),
                 prevKey = params.prevKey(),

@@ -9,7 +9,6 @@ import javax.inject.Inject
 class MovieRepository @Inject constructor(
     private val apiService: ApiService
 ){
-
     suspend fun getMovies(querys: ArrayList<String>): Map<String, MovieResponse>{
         val response: MutableMap<String, MovieResponse> = mutableMapOf()
         querys

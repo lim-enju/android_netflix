@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
 //https://medium.com/androiddevelopers/effective-state-management-for-textfield-in-compose-d6e5b070fbe5
