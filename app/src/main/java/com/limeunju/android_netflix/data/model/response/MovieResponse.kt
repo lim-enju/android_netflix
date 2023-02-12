@@ -8,10 +8,10 @@ data class MovieResponse (
     @SerializedName("total"         ) var total         : Int?             = null,
     @SerializedName("start"         ) var start         : Int?             = null,
     @SerializedName("display"       ) var display       : Int?             = null,
-    @SerializedName("items"         ) var items         : ArrayList<Items> = arrayListOf()
+    @SerializedName("items"         ) var movies         : ArrayList<Movie> = arrayListOf()
 )
 
-data class Items (
+data class Movie (
     @SerializedName("title"      ) var title      : String? = null,
     @SerializedName("link"       ) var link       : String? = null,
     @SerializedName("image"      ) var image      : String? = null,
@@ -19,5 +19,6 @@ data class Items (
     @SerializedName("pubDate"    ) var pubDate    : String? = null,
     @SerializedName("director"   ) var director   : String? = null,
     @SerializedName("actor"      ) var actor      : String? = null,
-    @SerializedName("userRating" ) var userRating : String? = null
+    @SerializedName("userRating" ) var userRating : String? = null,
+    var favorite : Boolean = false
 )

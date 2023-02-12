@@ -41,6 +41,8 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.3.2"
     }
+
+    configurations { implementation.exclude group: 'org.jetbrains', module: 'annotations' }
 }
 
 kapt {

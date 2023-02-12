@@ -15,4 +15,12 @@ class MovieUseCase @Inject constructor(
     fun getMovies(query: String) = Pager(PagingConfig(pageSize = SearchConfig.SEARCHED_DISPLAY_NUM)) {
         MoviePagingSource(query, movieRepository)
     }.flow
+
+    suspend fun saveFavorite(name: String){
+        movieRepository.saveFavorite(name)
+    }
+
+    suspend fun deleteFavorite(name: String){
+        movieRepository.deleteFavorite(name)
+    }
 }
