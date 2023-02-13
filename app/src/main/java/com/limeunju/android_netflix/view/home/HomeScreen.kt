@@ -1,5 +1,6 @@
 package com.limeunju.android_netflix.view.home
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,6 +20,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -78,6 +80,8 @@ fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
 @Composable
 fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
     val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
+    val favorite = viewmodel.favorites.collectAsState()
+    Log.d("EJLIM", "recomposable...")
 
     Column {
         Text("<$query> 과 관련된 영화")
@@ -88,7 +92,7 @@ fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
-                    MovieImage(item)
+                    MovieImage(item, favorite.value.contains(item.title))
                 }
             }
         }
@@ -97,7 +101,9 @@ fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
 
 @Composable
 fun MovieImage(
-    item: Movie,
+    movie: Movie,
+    isFavorite: Boolean,
+    viewmodel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
     Card (
@@ -108,7 +114,7 @@ fun MovieImage(
     ){
         Box(modifier = modifier.height(200.dp)){
             AsyncImage(
-                model = item.image,
+                model = movie.image,
                 contentDescription = null,
                 modifier =
                 modifier
@@ -118,7 +124,10 @@ fun MovieImage(
                     .fillMaxHeight()
             )
             IconButton(onClick = {
-
+                movie.title?.let {title ->
+                    if(isFavorite) viewmodel.deleteFavorite(title)
+                    else viewmodel.saveFavorite(title)
+                }
             }) {
                 Icon(
                     modifier =
@@ -127,7 +136,8 @@ fun MovieImage(
                         .width(30.dp)
                         .height(30.dp),
                     imageVector = Icons.Outlined.Star,
-                    contentDescription = null
+                    contentDescription = null,
+                    tint = if(isFavorite) Color.Yellow else Color.Black
                 )
             }
         }

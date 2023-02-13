@@ -12,15 +12,16 @@ import javax.inject.Inject
 class MovieUseCase @Inject constructor(
     private val movieRepository: MovieRepository
 ) {
+    val favorites = movieRepository.favorites
     fun getMovies(query: String) = Pager(PagingConfig(pageSize = SearchConfig.SEARCHED_DISPLAY_NUM)) {
         MoviePagingSource(query, movieRepository)
     }.flow
 
-    suspend fun saveFavorite(name: String){
+    fun saveFavorite(name: String){
         movieRepository.saveFavorite(name)
     }
 
-    suspend fun deleteFavorite(name: String){
+    fun deleteFavorite(name: String){
         movieRepository.deleteFavorite(name)
     }
 }

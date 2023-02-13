@@ -22,15 +22,15 @@ class MovieDataSource @Inject constructor(
         yearfrom:Int? = SearchConfig.SEARCHED_START_DATE,
         yearto:Int? = SearchConfig.SEARCHED_END_DATE
     ) = apiService.getMovies(query, display, start, yearfrom, yearto)
-    suspend fun saveFavorite(name: String) {
+    fun saveFavorite(name: String) {
         database
             .favoriteDao()
             .insert(Favorite(name= name))
     }
 
-    suspend fun deleteFavorite(name: String) {
+    fun deleteFavorite(name: String) {
         database
             .favoriteDao()
-            .delete(Favorite(name= name))
+            .delete(name)
     }
 }

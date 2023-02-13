@@ -19,6 +19,5 @@ data class Movie (
     @SerializedName("pubDate"    ) var pubDate    : String? = null,
     @SerializedName("director"   ) var director   : String? = null,
     @SerializedName("actor"      ) var actor      : String? = null,
-    @SerializedName("userRating" ) var userRating : String? = null,
-    var favorite : Boolean = false
+    @SerializedName("userRating" ) var userRating : String? = null
 )

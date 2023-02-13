@@ -1,6 +1,8 @@
 package com.limeunju.android_netflix.data.module
 
 import com.limeunju.android_netflix.BuildConfig
+import com.limeunju.android_netflix.data.database.Favorite.FavoriteDao
+import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.repository.MovieRepository
 import com.limeunju.android_netflix.data.service.ApiService
 import com.limeunju.android_netflix.data.usecase.MovieUseCase
@@ -45,13 +47,19 @@ private object ApiModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService {
-        return retrofit.create(ApiService::class.java)
-    }
+    fun provideMovieDataSource(
+        appDatabase: AppDatabase,
+        apiService: ApiService
+    ): MovieDataSource = MovieDataSource(appDatabase, apiService)
+
+    @Provides
+    @Singleton
+    fun provideApiService(retrofit: Retrofit): ApiService
+        = retrofit.create(ApiService::class.java)
 
     @Singleton
     @Provides
-    fun provideMovieRepository(apiService:ApiService) = MovieRepository(apiService)
+    fun provideMovieRepository(movieDataSource:MovieDataSource) = MovieRepository(movieDataSource)
 
     @Singleton
     @Provides

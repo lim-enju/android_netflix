@@ -18,7 +18,7 @@ class MoviePagingSource constructor(
             val nextPageNumber = params.key ?: 1
             val response = movieRepository.getMovies(query, start = nextPageNumber)
             LoadResult.Page(
-                data = response?.items?: arrayListOf(),
+                data = response?.movies?: arrayListOf(),
                 prevKey = params.prevKey(),
                 nextKey = params.nextKey(response?.total?:0)
             )

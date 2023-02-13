@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.mapLatest
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 //https://medium.com/androiddevelopers/effective-state-management-for-textfield-in-compose-d6e5b070fbe5
@@ -28,10 +29,21 @@ class SearchViewModel @Inject constructor(
         this.inputQuery = query
     }
 
+    val favorites = movieUseCase.favorites
     val searchMovies =
         snapshotFlow { inputQuery }
             .flatMapLatest {
                 movieUseCase.getMovies(inputQuery).cachedIn(viewModelScope)
             }
+    fun saveFavorite(name: String){
+        viewModelScope.launch (Dispatchers.IO){
+            movieUseCase.saveFavorite(name)
+        }
+    }
 
+    fun deleteFavorite(name: String){
+        viewModelScope.launch (Dispatchers.IO){
+            movieUseCase.deleteFavorite(name)
+        }
+    }
 }

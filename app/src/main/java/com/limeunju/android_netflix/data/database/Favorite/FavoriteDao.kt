@@ -3,6 +3,7 @@ package com.limeunju.android_netflix.data.database.Favorite
 import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
+import androidx.room.MapInfo
 import androidx.room.Query
 import kotlinx.coroutines.flow.Flow
 
@@ -14,6 +15,6 @@ interface FavoriteDao {
     @Insert
     fun insert(favorite: Favorite)
 
-    @Delete
-    fun delete(favorite: Favorite)
+    @Query("DELETE FROM favorite WHERE name = :title")
+    fun delete(title: String)
 }
