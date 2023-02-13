@@ -1,4 +1,4 @@
-package com.limeunju.android_netflix.view.home
+package com.limeunju.android_netflix.view.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -14,19 +14,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class FavoriteViewModel @Inject constructor(
     private val movieUseCase: MovieUseCase,
 ): ViewModel() {
-    //key: query
-    //value: 검색된 영화
-    val recomMovies = mutableMapOf<String, Flow<PagingData<Movie>>>()
     val favorites = movieUseCase.favorites
-    init {
-        MOVIE_KEYWORD
-            .forEach {
-                recomMovies[it] = movieUseCase.getMovies(it).cachedIn(viewModelScope)
-            }
-    }
 
     fun saveFavorite(movie: Movie){
         viewModelScope.launch (Dispatchers.IO){

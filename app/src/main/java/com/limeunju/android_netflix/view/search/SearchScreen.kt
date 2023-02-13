@@ -97,7 +97,7 @@ fun SearchBar(
 @Composable
 fun SearchedScreen(
     movie: LazyPagingItems<Movie>,
-    favorites: List<String>,
+    favorites: Map<String, Movie>,
     viewmodel: SearchViewModel = hiltViewModel(),
 ){
     when(movie.loadState.refresh){
@@ -110,7 +110,7 @@ fun SearchedScreen(
                 items(movie.itemCount)
                 { index ->
                     movie[index]?.let {
-                        SearchedItem(it, favorites.contains(it.title))
+                        SearchedItem(it, favorites.keys.contains(it.title))
                     }
                 }
             }
@@ -144,10 +144,8 @@ fun SearchedItem(
                     .fillMaxHeight()
             )
             IconButton(onClick = {
-                movie.title?.let {title ->
-                    if(isFavorite) viewmodel.deleteFavorite(title)
-                    else viewmodel.saveFavorite(title)
-                }
+                if(isFavorite) viewmodel.deleteFavorite(movie)
+                else viewmodel.saveFavorite(movie)
             }) {
                 Icon(
                     modifier =

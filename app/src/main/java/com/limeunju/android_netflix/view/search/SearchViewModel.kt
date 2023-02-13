@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.cachedIn
+import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.usecase.MovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -35,15 +36,15 @@ class SearchViewModel @Inject constructor(
             .flatMapLatest {
                 movieUseCase.getMovies(inputQuery).cachedIn(viewModelScope)
             }
-    fun saveFavorite(name: String){
+    fun saveFavorite(movie: Movie){
         viewModelScope.launch (Dispatchers.IO){
-            movieUseCase.saveFavorite(name)
+            movieUseCase.saveFavorite(movie)
         }
     }
 
-    fun deleteFavorite(name: String){
+    fun deleteFavorite(movie: Movie){
         viewModelScope.launch (Dispatchers.IO){
-            movieUseCase.deleteFavorite(name)
+            movieUseCase.deleteFavorite(movie)
         }
     }
 }

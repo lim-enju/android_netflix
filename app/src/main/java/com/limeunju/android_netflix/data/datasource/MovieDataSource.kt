@@ -2,6 +2,8 @@ package com.limeunju.android_netflix.data.datasource
 
 import com.limeunju.android_netflix.common.SearchConfig
 import com.limeunju.android_netflix.data.database.Favorite.Favorite
+import com.limeunju.android_netflix.data.model.response.Movie
+import com.limeunju.android_netflix.data.model.response.toFavorite
 import com.limeunju.android_netflix.data.module.AppDatabase
 import com.limeunju.android_netflix.data.service.ApiService
 import javax.inject.Inject
@@ -22,15 +24,17 @@ class MovieDataSource @Inject constructor(
         yearfrom:Int? = SearchConfig.SEARCHED_START_DATE,
         yearto:Int? = SearchConfig.SEARCHED_END_DATE
     ) = apiService.getMovies(query, display, start, yearfrom, yearto)
-    fun saveFavorite(name: String) {
+    fun saveFavorite(movie: Movie) {
         database
             .favoriteDao()
-            .insert(Favorite(name= name))
+            .insert(movie.toFavorite())
     }
 
-    fun deleteFavorite(name: String) {
-        database
-            .favoriteDao()
-            .delete(name)
+    fun deleteFavorite(movie: Movie) {
+        movie.title?.let {
+            database
+                .favoriteDao()
+                .delete(it)
+        }
     }
 }

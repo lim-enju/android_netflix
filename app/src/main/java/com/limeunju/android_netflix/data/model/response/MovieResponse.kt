@@ -1,6 +1,7 @@
 package com.limeunju.android_netflix.data.model.response
 
 import com.google.gson.annotations.SerializedName
+import com.limeunju.android_netflix.data.database.Favorite.Favorite
 import java.util.*
 
 data class MovieResponse (
@@ -21,3 +22,15 @@ data class Movie (
     @SerializedName("actor"      ) var actor      : String? = null,
     @SerializedName("userRating" ) var userRating : String? = null
 )
+
+fun Movie.toFavorite() =
+    Favorite(
+        title = title,
+        link = link,
+        image = image,
+        subtitle = subtitle,
+        pubDate = pubDate,
+        director = director,
+        actor = actor,
+        userRating = userRating
+    )

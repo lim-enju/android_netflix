@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.limeunju.android_netflix.R
+import com.limeunju.android_netflix.view.favorite.FavoriteScreen
 import com.limeunju.android_netflix.view.home.HomeScreen
 import com.limeunju.android_netflix.view.search.SearchScreen
 
@@ -42,10 +43,10 @@ fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
             }
         }
         composable(BottomNavItem.Game.screenRoute) {
-            HomeScreen(){}
+            FavoriteScreen()
         }
         composable(BottomNavItem.Feed.screenRoute) {
-            HomeScreen(){}
+            //HomeScreen(){}
         }
         composable(
             route = HomeNavItem.Search.screenRoute

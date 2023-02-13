@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.limeunju.android_netflix.common.SearchConfig
 import com.limeunju.android_netflix.data.datasource.MoviePagingSource
+import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.repository.MovieRepository
 import kotlinx.coroutines.CoroutineScope
 import javax.inject.Inject
@@ -17,11 +18,11 @@ class MovieUseCase @Inject constructor(
         MoviePagingSource(query, movieRepository)
     }.flow
 
-    fun saveFavorite(name: String){
-        movieRepository.saveFavorite(name)
+    fun saveFavorite(movie: Movie){
+        movieRepository.saveFavorite(movie)
     }
 
-    fun deleteFavorite(name: String){
-        movieRepository.deleteFavorite(name)
+    fun deleteFavorite(movie: Movie){
+        movieRepository.deleteFavorite(movie)
     }
 }

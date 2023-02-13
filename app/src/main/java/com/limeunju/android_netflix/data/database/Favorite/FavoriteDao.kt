@@ -15,6 +15,6 @@ interface FavoriteDao {
     @Insert
     fun insert(favorite: Favorite)
 
-    @Query("DELETE FROM favorite WHERE name = :title")
+    @Query("DELETE FROM favorite WHERE title = :title")
     fun delete(title: String)
 }

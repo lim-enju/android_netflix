@@ -3,7 +3,9 @@ package com.limeunju.android_netflix.data.repository
 import android.util.Log
 import com.limeunju.android_netflix.common.SearchConfig
 import com.limeunju.android_netflix.data.database.Favorite.Favorite
+import com.limeunju.android_netflix.data.database.Favorite.toMovie
 import com.limeunju.android_netflix.data.datasource.MovieDataSource
+import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.model.response.MovieResponse
 import com.limeunju.android_netflix.data.service.ApiService
 import kotlinx.coroutines.CoroutineScope
@@ -20,10 +22,14 @@ class MovieRepository @Inject constructor(
     val favorites =
         movieDataSource
             .favoriteMovies
-            .transform { list ->
-                emit( list.map{ it.name } )
+            .map {list ->
+                val map = mutableMapOf<String, Movie>()
+                list
+                    .filterNot { it.title.isNullOrBlank()}
+                    .forEach { favorite -> map[favorite.title?:""] = favorite.toMovie() }
+                map
             }
-            .stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), listOf())
+            .stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), mapOf())
     suspend fun getMovies(
         query:String,
         display:Int? = null,
@@ -42,11 +48,10 @@ class MovieRepository @Inject constructor(
         }
         return result
     }
-    fun saveFavorite(name: String)
-        = movieDataSource.saveFavorite(name)
+    fun saveFavorite(movie: Movie)
+        = movieDataSource.saveFavorite(movie)
 
-    fun deleteFavorite(name: String) {
-        Log.d("EJLIM", "delete $name")
-        movieDataSource.deleteFavorite(name)
+    fun deleteFavorite(movie: Movie) {
+        movieDataSource.deleteFavorite(movie)
     }
 }

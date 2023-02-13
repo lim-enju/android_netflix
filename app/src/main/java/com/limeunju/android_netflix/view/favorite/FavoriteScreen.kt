@@ -1,4 +1,6 @@
-package com.limeunju.android_netflix.view.home
+package com.limeunju.android_netflix.view.favorite
+
+import com.limeunju.android_netflix.view.home.HomeViewModel
 
 import android.util.Log
 import androidx.compose.foundation.layout.Box
@@ -10,6 +12,9 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Card
@@ -17,7 +22,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -32,72 +36,23 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.limeunju.android_netflix.data.model.response.Movie
-import com.limeunju.android_netflix.view.AppBar
-import com.limeunju.android_netflix.view.navigation.HomeNavItem
+import com.limeunju.android_netflix.view.search.SearchedItem
 
 @Composable
-fun HomeScreen(
-    selectItem: (HomeNavItem) -> Unit
-){
-    Column {
-        AppBar(
-            title = {Text("")},
-            actions = {
-                IconButton(onClick = {
-                    selectItem(HomeNavItem.Search)
-                }){
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "Search",
-                        tint = Color.White
-                    )
-                }
-            }
-        )
-        MovieList()
-    }
-}
+fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel()){
+    val movies = viewmodel.favorites.collectAsState()
 
-@Composable
-fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
-    val movies = remember { viewmodel.recomMovies }
-
-    val scrollState = rememberScrollState()
-    Column (
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(scrollState)
-        ){
-        movies.keys.toList()
-            .forEach {
-                MovieItem(it)
-            }
-    }
-}
-
-@Composable
-fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
-    val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
-    val favorite = viewmodel.favorites.collectAsState()
-    Log.d("EJLIM", "recomposable...")
-
-    Column {
-        Text("<$query> 과 관련된 영화")
-        LazyRow(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(200.dp)
-        ){
-            itemsIndexed(movie) { index, item ->
-                item?.let {
-                    MovieImage(item, favorite.value.keys.contains(item.title))
-                }
+    LazyVerticalGrid(
+        columns = GridCells.Fixed(3),
+    ){
+        movies.value.forEach {title, movie ->
+            item {
+                MovieImage(movie, true)
             }
         }
     }
 }
+
 
 @Composable
 fun MovieImage(
@@ -124,8 +79,7 @@ fun MovieImage(
                     .fillMaxHeight()
             )
             IconButton(onClick = {
-                if(isFavorite) viewmodel.deleteFavorite(movie)
-                else viewmodel.saveFavorite(movie)
+                viewmodel.deleteFavorite(movie)
             }) {
                 Icon(
                     modifier =
