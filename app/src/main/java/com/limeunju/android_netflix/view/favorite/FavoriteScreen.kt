@@ -3,6 +3,7 @@ package com.limeunju.android_netflix.view.favorite
 import com.limeunju.android_netflix.view.home.HomeViewModel
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -36,10 +37,11 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.limeunju.android_netflix.data.model.response.Movie
+import com.limeunju.android_netflix.view.navigation.NavScreen
 import com.limeunju.android_netflix.view.search.SearchedItem
 
 @Composable
-fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel()){
+fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel(), selectItem: (NavScreen, Movie?) -> Unit){
     val movies = viewmodel.favorites.collectAsState()
 
     LazyVerticalGrid(
@@ -47,7 +49,7 @@ fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel()){
     ){
         movies.value.forEach {title, movie ->
             item {
-                MovieImage(movie, true)
+                MovieImage(movie, true, selectItem)
             }
         }
     }
@@ -58,6 +60,7 @@ fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel()){
 fun MovieImage(
     movie: Movie,
     isFavorite: Boolean,
+    selectItem: (NavScreen, Movie?) -> Unit,
     viewmodel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
@@ -66,6 +69,7 @@ fun MovieImage(
         modifier = modifier
             .wrapContentHeight()
             .wrapContentWidth()
+            .clickable { selectItem(NavScreen.Detail, movie) }
     ){
         Box(modifier = modifier.height(200.dp)){
             AsyncImage(

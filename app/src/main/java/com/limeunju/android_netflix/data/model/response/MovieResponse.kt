@@ -1,7 +1,9 @@
 package com.limeunju.android_netflix.data.model.response
 
+import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import com.limeunju.android_netflix.data.database.Favorite.Favorite
+import kotlinx.parcelize.Parcelize
 import java.util.*
 
 data class MovieResponse (
@@ -12,6 +14,7 @@ data class MovieResponse (
     @SerializedName("items"         ) var movies         : ArrayList<Movie> = arrayListOf()
 )
 
+@Parcelize
 data class Movie (
     @SerializedName("title"      ) var title      : String? = null,
     @SerializedName("link"       ) var link       : String? = null,
@@ -21,7 +24,7 @@ data class Movie (
     @SerializedName("director"   ) var director   : String? = null,
     @SerializedName("actor"      ) var actor      : String? = null,
     @SerializedName("userRating" ) var userRating : String? = null
-)
+): Parcelable
 
 fun Movie.toFavorite() =
     Favorite(

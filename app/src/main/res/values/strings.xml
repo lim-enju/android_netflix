@@ -6,5 +6,6 @@
     <string name="menu_feed">FEED</string>
 
     <string name="menu_search">SEARCH</string>
+    <string name="detail">DETAIL</string>
     <string name="placeholder_search">시리즈, 영화, 장르 등을 검색</string>
 </resources>

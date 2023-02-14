@@ -1,5 +1,6 @@
 package com.limeunju.android_netflix.view.search
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,9 +37,10 @@ import coil.compose.AsyncImage
 import com.limeunju.android_netflix.R
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.view.AppBar
+import com.limeunju.android_netflix.view.navigation.NavScreen
 
 @Composable
-fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel()) {
+fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel(), selectItem: (NavScreen, Movie?) -> Unit) {
     //collectAsLazyPagingItems: PagingData의 flow collect
     val movies = viewmodel.searchMovies.collectAsLazyPagingItems()
     val favorites = viewmodel.favorites.collectAsState()
@@ -50,7 +52,7 @@ fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel()) {
             SearchBar(
                 paddingValues = paddingValues
             )
-            SearchedScreen(movies, favorites.value)
+            SearchedScreen(movies, favorites.value, selectItem)
         }
     }
 
@@ -98,6 +100,7 @@ fun SearchBar(
 fun SearchedScreen(
     movie: LazyPagingItems<Movie>,
     favorites: Map<String, Movie>,
+    selectItem: (NavScreen, Movie?) -> Unit,
     viewmodel: SearchViewModel = hiltViewModel(),
 ){
     when(movie.loadState.refresh){
@@ -110,7 +113,7 @@ fun SearchedScreen(
                 items(movie.itemCount)
                 { index ->
                     movie[index]?.let {
-                        SearchedItem(it, favorites.keys.contains(it.title))
+                        SearchedItem(it, favorites.keys.contains(it.title), selectItem)
                     }
                 }
             }
@@ -122,6 +125,7 @@ fun SearchedScreen(
 fun SearchedItem(
     movie: Movie,
     isFavorite: Boolean,
+    selectItem: (NavScreen, Movie?) -> Unit,
     viewmodel:SearchViewModel = hiltViewModel(),
     modifier: Modifier = Modifier)
 {
@@ -129,6 +133,7 @@ fun SearchedItem(
         modifier = modifier
             .wrapContentHeight()
             .fillMaxWidth()
+            .clickable { selectItem(NavScreen.Detail, movie) }
     ){
         Box(modifier =
         modifier

@@ -1,6 +1,7 @@
 package com.limeunju.android_netflix.view.home
 
 import android.util.Log
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -33,18 +34,18 @@ import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.view.AppBar
-import com.limeunju.android_netflix.view.navigation.HomeNavItem
+import com.limeunju.android_netflix.view.navigation.NavScreen
 
 @Composable
 fun HomeScreen(
-    selectItem: (HomeNavItem) -> Unit
+    selectItem: (NavScreen, Movie?) -> Unit
 ){
     Column {
         AppBar(
             title = {Text("")},
             actions = {
                 IconButton(onClick = {
-                    selectItem(HomeNavItem.Search)
+                    selectItem(NavScreen.Search, null)
                 }){
                     Icon(
                         imageVector = Icons.Filled.Search,
@@ -54,12 +55,12 @@ fun HomeScreen(
                 }
             }
         )
-        MovieList()
+        MovieList(selectItem)
     }
 }
 
 @Composable
-fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
+fun MovieList(selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
     val movies = remember { viewmodel.recomMovies }
 
     val scrollState = rememberScrollState()
@@ -72,13 +73,13 @@ fun MovieList(viewmodel: HomeViewModel = hiltViewModel()) {
         ){
         movies.keys.toList()
             .forEach {
-                MovieItem(it)
+                MovieItem(it, selectItem)
             }
     }
 }
 
 @Composable
-fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
+fun MovieItem(query: String, selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()){
     val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
     val favorite = viewmodel.favorites.collectAsState()
     Log.d("EJLIM", "recomposable...")
@@ -92,7 +93,7 @@ fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
-                    MovieImage(item, favorite.value.keys.contains(item.title))
+                    MovieImage(item, favorite.value.keys.contains(item.title), selectItem)
                 }
             }
         }
@@ -103,6 +104,7 @@ fun MovieItem(query: String, viewmodel: HomeViewModel = hiltViewModel()){
 fun MovieImage(
     movie: Movie,
     isFavorite: Boolean,
+    selectItem: (NavScreen, Movie?) -> Unit,
     viewmodel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
@@ -112,16 +114,20 @@ fun MovieImage(
             .wrapContentHeight()
             .wrapContentWidth()
     ){
-        Box(modifier = modifier.height(200.dp)){
+        Box(
+            modifier =
+                modifier.height(200.dp)
+                    .clickable { selectItem(NavScreen.Detail, movie) }
+        ){
             AsyncImage(
                 model = movie.image,
                 contentDescription = null,
                 modifier =
-                modifier
-                    .height(200.dp)
-                    .width(100.dp)
-                    .fillMaxWidth()
-                    .fillMaxHeight()
+                    modifier
+                        .height(200.dp)
+                        .width(100.dp)
+                        .fillMaxWidth()
+                        .fillMaxHeight()
             )
             IconButton(onClick = {
                 if(isFavorite) viewmodel.deleteFavorite(movie)

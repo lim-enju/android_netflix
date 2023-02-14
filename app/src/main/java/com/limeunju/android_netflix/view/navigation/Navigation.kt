@@ -19,11 +19,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.limeunju.android_netflix.R
+import com.limeunju.android_netflix.view.detail.DetailScreen
 import com.limeunju.android_netflix.view.favorite.FavoriteScreen
 import com.limeunju.android_netflix.view.home.HomeScreen
 import com.limeunju.android_netflix.view.search.SearchScreen
@@ -36,22 +39,33 @@ fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
         startDestination = BottomNavItem.Home.screenRoute
     ) {
         composable(BottomNavItem.Home.screenRoute) {
-            HomeScreen(){ screen ->
-                when(screen){
-                    HomeNavItem.Search -> navController.navigate(HomeNavItem.Search.screenRoute)
-                }
+            HomeScreen(){ screen, movie ->
+                 navController.navigate("${screen.screenRoute}/${movie?.title}")
             }
         }
         composable(BottomNavItem.Game.screenRoute) {
-            FavoriteScreen()
+            FavoriteScreen(){ screen, movie ->
+                navController.navigate("${screen.screenRoute}/${movie?.title}")
+            }
         }
         composable(BottomNavItem.Feed.screenRoute) {
             //HomeScreen(){}
         }
         composable(
-            route = HomeNavItem.Search.screenRoute
+            route = NavScreen.Search.screenRoute,
         ){
-            SearchScreen()
+            SearchScreen(){ screen, movie ->
+                navController.navigate("${screen.screenRoute}/${movie?.title}")
+            }
+        }
+        composable(
+            route = NavScreen.Detail.routeWithArgument,
+            arguments = listOf(
+                navArgument(NavScreen.Detail.title) { type = NavType.StringType }
+            )
+        ){backStackEntry ->
+            val title = backStackEntry.arguments?.getString(NavScreen.Detail.title)?: return@composable
+            DetailScreen(title)
         }
     }
 }

@@ -12,9 +12,6 @@ import com.limeunju.android_netflix.data.usecase.MovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.flatMapLatest
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.mapLatest
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,7 +31,7 @@ class SearchViewModel @Inject constructor(
     val searchMovies =
         snapshotFlow { inputQuery }
             .flatMapLatest {
-                movieUseCase.getMovies(inputQuery).cachedIn(viewModelScope)
+                movieUseCase.getMoviesPager(inputQuery).cachedIn(viewModelScope)
             }
     fun saveFavorite(movie: Movie){
         viewModelScope.launch (Dispatchers.IO){

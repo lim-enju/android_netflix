@@ -48,6 +48,7 @@ class MovieRepository @Inject constructor(
         }
         return result
     }
+
     fun saveFavorite(movie: Movie)
         = movieDataSource.saveFavorite(movie)
 

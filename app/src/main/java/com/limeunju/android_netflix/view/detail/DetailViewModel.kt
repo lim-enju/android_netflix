@@ -1,4 +1,4 @@
-package com.limeunju.android_netflix.view.home
+package com.limeunju.android_netflix.view.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -10,22 +10,31 @@ import com.limeunju.android_netflix.data.usecase.MovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeViewModel @Inject constructor(
+class DetailViewModel @Inject constructor(
     private val movieUseCase: MovieUseCase,
 ): ViewModel() {
-    //key: query
-    //value: 검색된 영화
-    val recomMovies = mutableMapOf<String, Flow<PagingData<Movie>>>()
-    val favorites = movieUseCase.favorites
-    init {
-        MOVIE_KEYWORD
-            .forEach {
-                recomMovies[it] = movieUseCase.getMoviesPager(it).cachedIn(viewModelScope)
+    private val _movie = MutableStateFlow<Movie?>(null)
+    val movie = _movie.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
+
+    sealed class DetailError{
+        class NotFoundError:DetailError()
+        class NetworkError:DetailError()
+    }
+
+    fun fetchMovieDetailByTitle(title: String){
+        viewModelScope.launch (Dispatchers.IO){
+            val movie = movieUseCase.getMovie(title)
+            if(movie != null){
+                _movie.emit(movie)
             }
+        }
     }
 
     fun saveFavorite(movie: Movie){
