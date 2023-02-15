@@ -82,7 +82,6 @@ fun MovieList(selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel 
 fun MovieItem(query: String, selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()){
     val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
     val favorite = viewmodel.favorites.collectAsState()
-    Log.d("EJLIM", "recomposable...")
 
     Column {
         Text("<$query> 과 관련된 영화")

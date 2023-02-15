@@ -1,5 +1,6 @@
 package com.limeunju.android_netflix.view.detail
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -31,6 +32,7 @@ class DetailViewModel @Inject constructor(
     fun fetchMovieDetailByTitle(title: String){
         viewModelScope.launch (Dispatchers.IO){
             val movie = movieUseCase.getMovie(title)
+            Log.d("EJLIM", "searched movie ${(movie != null)}")
             if(movie != null){
                 _movie.emit(movie)
             }

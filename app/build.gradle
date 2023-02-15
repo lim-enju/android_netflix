@@ -117,4 +117,6 @@ dependencies {
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:2.5.0")
+
+    implementation "com.google.accompanist:accompanist-webview:0.24.13-rc"
 }
