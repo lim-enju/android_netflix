@@ -23,18 +23,12 @@ class DetailViewModel @Inject constructor(
 ): ViewModel() {
     private val _movie = MutableStateFlow<Movie?>(null)
     val movie = _movie.stateIn(viewModelScope, SharingStarted.WhileSubscribed(), null)
-
-    sealed class DetailError{
-        class NotFoundError:DetailError()
-        class NetworkError:DetailError()
-    }
+    val foavrites = movieUseCase.favorites
 
     fun fetchMovieDetailByTitle(title: String){
-        viewModelScope.launch (Dispatchers.IO){
-            val movie = movieUseCase.getMovie(title)
-            Log.d("EJLIM", "searched movie ${(movie != null)}")
-            if(movie != null){
-                _movie.emit(movie)
+        viewModelScope.launch (Dispatchers.IO) {
+            movieUseCase.getMovie(title)?.let {
+                _movie.emit(it)
             }
         }
     }
@@ -50,5 +44,4 @@ class DetailViewModel @Inject constructor(
             movieUseCase.deleteFavorite(movie)
         }
     }
-
 }

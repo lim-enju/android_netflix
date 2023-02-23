@@ -14,17 +14,17 @@ class MoviePagingSource constructor(
     //LoadParams: 로드할 키와 항목 수
     //LoadResult: 로드 작업의 결과
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
-        return try {
-            val nextPageNumber = params.key ?: 1
-            val response = movieRepository.getMovies(query, start = nextPageNumber)
+        val nextPageNumber = params.key ?: 1
+        val response = movieRepository.getMovies(query, start = nextPageNumber)
+
+        return if(response.isSuccess){
+            val data = response.getOrNull()
             LoadResult.Page(
-                data = response?.movies?: arrayListOf(),
+                data = data?.movies?: arrayListOf(),
                 prevKey = params.prevKey(),
-                nextKey = params.nextKey(response?.total?:0)
+                nextKey = params.nextKey(data?.total?:0)
             )
-        } catch (e: Exception) {
-            LoadResult.Error(e)
-        }
+        } else LoadResult.Error(Throwable())
     }
 
     override fun getRefreshKey(state: PagingState<Int, Movie>): Int =

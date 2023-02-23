@@ -16,5 +16,5 @@ interface ApiService {
         @Query("start") start: Int?,
         @Query("yearfrom") yearfrom: Int?,
         @Query("yearto") yearto: Int?
-    ): MovieResponse?
+    ): Result<MovieResponse>
 }

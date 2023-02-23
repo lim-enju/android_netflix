@@ -1,21 +1,15 @@
 package com.limeunju.android_netflix.data.repository
 
-import android.util.Log
-import com.limeunju.android_netflix.common.SearchConfig
-import com.limeunju.android_netflix.data.database.Favorite.Favorite
 import com.limeunju.android_netflix.data.database.Favorite.toMovie
 import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.model.response.MovieResponse
-import com.limeunju.android_netflix.data.service.ApiService
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import kotlinx.coroutines.flow.transform
 import javax.inject.Inject
-
 class MovieRepository @Inject constructor(
     private val movieDataSource: MovieDataSource
 ){
@@ -36,18 +30,14 @@ class MovieRepository @Inject constructor(
         start:Int? = null,
         yearfrom:Int? = null,
         yearto:Int? = null,
-    ): MovieResponse? {
-        var result:MovieResponse?
-        try {
-            result = movieDataSource.getMovies(query, display, start, yearfrom, yearto)
-            result?.movies?.forEach {
-                it.title = it.title?.replace("<b>", "")?.replace("</b>", "")
+    ): Result<MovieResponse> =
+         movieDataSource.getMovies(query, display, start, yearfrom, yearto)
+            .onSuccess { response ->
+                response.movies.forEach {
+                    it.title = it.title?.replace("<b>", "")?.replace("</b>", "")
+                }
             }
-        }catch (exception: Exception){
-            result = null
-        }
-        return result
-    }
+            .onFailure {  }
 
     fun saveFavorite(movie: Movie)
         = movieDataSource.saveFavorite(movie)

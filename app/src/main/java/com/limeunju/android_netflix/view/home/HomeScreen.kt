@@ -61,7 +61,7 @@ fun HomeScreen(
 
 @Composable
 fun MovieList(selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
-    val movies = remember { viewmodel.recomMovies }
+    val movies = viewmodel.recomMovies
 
     val scrollState = rememberScrollState()
     Column (

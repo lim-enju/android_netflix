@@ -6,6 +6,7 @@ import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.repository.MovieRepository
 import com.limeunju.android_netflix.data.service.ApiService
 import com.limeunju.android_netflix.data.usecase.MovieUseCase
+import com.limeunju.android_netflix.data.util.ResponseAdapterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +43,7 @@ private object ApiModule {
             .client(okHttpClient)
             .baseUrl(provideBaseUrl())
             .addConverterFactory(GsonConverterFactory.create())
+            .addCallAdapterFactory(ResponseAdapterFactory())
             .build()
     }
 
