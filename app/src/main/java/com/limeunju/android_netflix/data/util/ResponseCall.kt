@@ -14,7 +14,7 @@ class ResponseCall<T> (private val callDelegate: Call<T>): Call<Result<T>> {
                     in 200..299 -> {
                         callback.onResponse(this@ResponseCall, Response.success(Result.success(it)))
                     }
-                    in 400..409 -> {
+                    in 400..409 -> {    //try catch를 사용하지 않도록 Response.success 로 반환함
                         callback.onResponse(this@ResponseCall, Response.success(Result.failure(IllegalArgumentException("cannot find"))))
                     }
                 }

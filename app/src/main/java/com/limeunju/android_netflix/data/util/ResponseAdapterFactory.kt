@@ -7,6 +7,7 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 class ResponseAdapterFactory: CallAdapter.Factory() {
+    //파라미터로 받은 returnType과 동일한 타입을 반환하는 어댑터 생성
     override fun get(
         returnType: Type,
         annotations: Array<out Annotation>,

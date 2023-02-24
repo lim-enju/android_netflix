@@ -2,12 +2,12 @@ package com.limeunju.android_netflix.data.module
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
-import com.limeunju.android_netflix.data.database.Favorite.Favorite
 import com.limeunju.android_netflix.data.database.Favorite.FavoriteDao
+import com.limeunju.android_netflix.data.model.response.Movie
 
 @Database(
     entities = [
-        Favorite::class
+        Movie::class
     ], version = 1
 )
 //companion object로 싱글톤 db 만들어서 바로 불러서 썼던 것과 다르게,

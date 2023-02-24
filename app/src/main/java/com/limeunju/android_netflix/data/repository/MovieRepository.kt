@@ -1,6 +1,6 @@
 package com.limeunju.android_netflix.data.repository
 
-import com.limeunju.android_netflix.data.database.Favorite.toMovie
+import android.net.Uri
 import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.model.response.MovieResponse
@@ -10,6 +10,8 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
+
+
 class MovieRepository @Inject constructor(
     private val movieDataSource: MovieDataSource
 ){
@@ -20,7 +22,7 @@ class MovieRepository @Inject constructor(
                 val map = mutableMapOf<String, Movie>()
                 list
                     .filterNot { it.title.isNullOrBlank()}
-                    .forEach { favorite -> map[favorite.title?:""] = favorite.toMovie() }
+                    .forEach { favorite -> map[favorite.title?:""] = favorite }
                 map
             }
             .stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), mapOf())
@@ -33,8 +35,16 @@ class MovieRepository @Inject constructor(
     ): Result<MovieResponse> =
          movieDataSource.getMovies(query, display, start, yearfrom, yearto)
             .onSuccess { response ->
-                response.movies.forEach {
-                    it.title = it.title?.replace("<b>", "")?.replace("</b>", "")
+                response.movies.removeIf { it.title == null || it.link == null }
+                response.movies.forEach { movie ->
+                    //태그 제거
+                    movie.title = movie.title?.replace("<b>", "")?.replace("</b>", "")
+
+                    //code 분리
+                    val uri = Uri.parse(movie.link)
+                    uri.getQueryParameter("code")?.let {
+                        movie.fid = it.toInt()
+                    }
                 }
             }
             .onFailure {  }
