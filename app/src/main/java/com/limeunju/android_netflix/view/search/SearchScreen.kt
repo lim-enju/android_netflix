@@ -40,7 +40,7 @@ import com.limeunju.android_netflix.view.AppBar
 import com.limeunju.android_netflix.view.navigation.NavScreen
 
 @Composable
-fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel(), selectItem: (NavScreen, Movie?) -> Unit) {
+fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel(), onMovieClick: (NavScreen, Movie?) -> Unit) {
     //collectAsLazyPagingItems: PagingData의 flow collect
     val movies = viewmodel.searchMovies.collectAsLazyPagingItems()
     val favorites = viewmodel.favorites.collectAsState()
@@ -52,7 +52,7 @@ fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel(), selectItem: (NavS
             SearchBar(
                 paddingValues = paddingValues
             )
-            SearchedScreen(movies, favorites.value, selectItem)
+            SearchedScreen(movies, favorites.value, onMovieClick)
         }
     }
 
@@ -100,7 +100,7 @@ fun SearchBar(
 fun SearchedScreen(
     movie: LazyPagingItems<Movie>,
     favorites: Map<String, Movie>,
-    selectItem: (NavScreen, Movie?) -> Unit,
+    onMovieClick: (NavScreen, Movie?) -> Unit,
     viewmodel: SearchViewModel = hiltViewModel(),
 ){
     when(movie.loadState.refresh){
@@ -113,7 +113,7 @@ fun SearchedScreen(
                 items(movie.itemCount)
                 { index ->
                     movie[index]?.let {
-                        SearchedItem(it, favorites.keys.contains(it.title), selectItem)
+                        SearchedItem(it, favorites.keys.contains(it.title), onMovieClick)
                     }
                 }
             }
@@ -125,7 +125,7 @@ fun SearchedScreen(
 fun SearchedItem(
     movie: Movie,
     isFavorite: Boolean,
-    selectItem: (NavScreen, Movie?) -> Unit,
+    onMovieClick: (NavScreen, Movie?) -> Unit,
     viewmodel:SearchViewModel = hiltViewModel(),
     modifier: Modifier = Modifier)
 {
@@ -133,7 +133,7 @@ fun SearchedItem(
         modifier = modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .clickable { selectItem(NavScreen.Detail, movie) }
+            .clickable { onMovieClick(NavScreen.Detail, movie) }
     ){
         Box(modifier =
         modifier

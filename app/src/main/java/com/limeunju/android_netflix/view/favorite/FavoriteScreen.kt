@@ -41,7 +41,7 @@ import com.limeunju.android_netflix.view.navigation.NavScreen
 import com.limeunju.android_netflix.view.search.SearchedItem
 
 @Composable
-fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel(), selectItem: (NavScreen, Movie?) -> Unit){
+fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel(), onMovieClick: (NavScreen, Movie?) -> Unit){
     val movies = viewmodel.favorites.collectAsState()
 
     LazyVerticalGrid(
@@ -49,7 +49,7 @@ fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel(), selectItem: (
     ){
         movies.value.forEach {title, movie ->
             item {
-                MovieImage(movie, true, selectItem)
+                MovieImage(movie, true, onMovieClick)
             }
         }
     }
@@ -60,7 +60,7 @@ fun FavoriteScreen(viewmodel: FavoriteViewModel = hiltViewModel(), selectItem: (
 fun MovieImage(
     movie: Movie,
     isFavorite: Boolean,
-    selectItem: (NavScreen, Movie?) -> Unit,
+    onMovieClick: (NavScreen, Movie?) -> Unit,
     viewmodel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
@@ -69,7 +69,7 @@ fun MovieImage(
         modifier = modifier
             .wrapContentHeight()
             .wrapContentWidth()
-            .clickable { selectItem(NavScreen.Detail, movie) }
+            .clickable { onMovieClick(NavScreen.Detail, movie) }
     ){
         Box(modifier = modifier.height(200.dp)){
             AsyncImage(

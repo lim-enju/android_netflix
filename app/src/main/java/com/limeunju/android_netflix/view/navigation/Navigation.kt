@@ -39,14 +39,20 @@ fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
         startDestination = BottomNavItem.Home.screenRoute
     ) {
         composable(BottomNavItem.Home.screenRoute) {
-            HomeScreen(){ screen, movie ->
-                 navController.navigate("${screen.screenRoute}/${movie?.title}")
-            }
+            HomeScreen(
+                onMovieClick = { screen, movie ->
+                    navController.navigate("${screen.screenRoute}/${movie?.title}")
+                },
+                onSearchClick = { screen ->
+                    navController.navigate(screen.screenRoute)
+                }
+            )
         }
         composable(BottomNavItem.Game.screenRoute) {
-            FavoriteScreen(){ screen, movie ->
-                navController.navigate("${screen.screenRoute}/${movie?.title}")
-            }
+            FavoriteScreen(
+                onMovieClick = { screen, movie ->
+                    navController.navigate("${screen.screenRoute}/${movie?.title}")
+            })
         }
         composable(BottomNavItem.Feed.screenRoute) {
             //HomeScreen(){}
@@ -54,16 +60,17 @@ fun NavGraph( modifier: Modifier = Modifier, navController: NavHostController){
         composable(
             route = NavScreen.Search.screenRoute,
         ){
-            SearchScreen(){ screen, movie ->
+            SearchScreen(
+                onMovieClick = { screen, movie ->
                 navController.navigate("${screen.screenRoute}/${movie?.title}")
-            }
+            })
         }
         composable(
             route = NavScreen.Detail.routeWithArgument,
             arguments = listOf(
                 navArgument(NavScreen.Detail.title) { type = NavType.StringType }
             )
-        ){backStackEntry ->
+        ){ backStackEntry ->
             val title = backStackEntry.arguments?.getString(NavScreen.Detail.title)?: return@composable
             DetailScreen(title)
         }

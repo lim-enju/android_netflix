@@ -38,14 +38,15 @@ import com.limeunju.android_netflix.view.navigation.NavScreen
 
 @Composable
 fun HomeScreen(
-    selectItem: (NavScreen, Movie?) -> Unit
+    onMovieClick: (NavScreen, Movie?) -> Unit,
+    onSearchClick: (NavScreen) -> Unit
 ){
     Column {
         AppBar(
             title = {Text("")},
             actions = {
                 IconButton(onClick = {
-                    selectItem(NavScreen.Search, null)
+                    onSearchClick(NavScreen.Search)
                 }){
                     Icon(
                         imageVector = Icons.Filled.Search,
@@ -55,12 +56,12 @@ fun HomeScreen(
                 }
             }
         )
-        MovieList(selectItem)
+        MovieList(onMovieClick)
     }
 }
 
 @Composable
-fun MovieList(selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
+fun MovieList(onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
     val movies = viewmodel.recomMovies
 
     val scrollState = rememberScrollState()
@@ -73,13 +74,13 @@ fun MovieList(selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel 
         ){
         movies.keys.toList()
             .forEach {
-                MovieItem(it, selectItem)
+                MovieItem(it, onMovieClick)
             }
     }
 }
 
 @Composable
-fun MovieItem(query: String, selectItem: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()){
+fun MovieItem(query: String, onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()){
     val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
     val favorite = viewmodel.favorites.collectAsState()
 
@@ -92,7 +93,7 @@ fun MovieItem(query: String, selectItem: (NavScreen, Movie?) -> Unit, viewmodel:
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
-                    MovieImage(item, favorite.value.keys.contains(item.title), selectItem)
+                    MovieImage(item, favorite.value.keys.contains(item.title), onMovieClick)
                 }
             }
         }
@@ -103,7 +104,7 @@ fun MovieItem(query: String, selectItem: (NavScreen, Movie?) -> Unit, viewmodel:
 fun MovieImage(
     movie: Movie,
     isFavorite: Boolean,
-    selectItem: (NavScreen, Movie?) -> Unit,
+    onMovieClick: (NavScreen, Movie?) -> Unit,
     viewmodel: HomeViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ){
@@ -116,7 +117,7 @@ fun MovieImage(
         Box(
             modifier =
                 modifier.height(200.dp)
-                    .clickable { selectItem(NavScreen.Detail, movie) }
+                    .clickable { onMovieClick(NavScreen.Detail, movie) }
         ){
             AsyncImage(
                 model = movie.image,
