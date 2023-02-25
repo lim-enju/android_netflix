@@ -2,11 +2,13 @@ package com.limeunju.android_netflix.view.home
 
 import android.util.Log
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
@@ -26,12 +28,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import coil.compose.AsyncImage
+import com.limeunju.android_netflix.common.nanum
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.view.AppBar
 import com.limeunju.android_netflix.view.navigation.NavScreen
@@ -61,6 +69,40 @@ fun HomeScreen(
 }
 
 @Composable
+fun MainMovie(viewmodel: HomeViewModel = hiltViewModel()){
+    val movie = viewmodel.mainMovie.collectAsState(initial = null).value
+    Log.d("EJLIM", "${movie?.title} ${movie?.image}")
+    movie?.let {
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(LocalConfiguration.current.screenWidthDp.dp)
+            ) {
+                AsyncImage(
+                    model = movie.image,
+                    contentDescription = "",
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+                )
+                Text(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    text = movie.title?:"",
+                    fontSize = 60.sp,
+                    fontFamily = nanum,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+            Text(
+                text = movie.actor?:""
+            )
+        }
+    }
+}
+
+@Composable
 fun MovieList(onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
     val movies = viewmodel.recomMovies
 
@@ -72,6 +114,7 @@ fun MovieList(onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewMode
             .fillMaxHeight()
             .verticalScroll(scrollState)
         ){
+        MainMovie()
         movies.keys.toList()
             .forEach {
                 MovieItem(it, onMovieClick)
@@ -85,11 +128,18 @@ fun MovieItem(query: String, onMovieClick: (NavScreen, Movie?) -> Unit, viewmode
     val favorite = viewmodel.favorites.collectAsState()
 
     Column {
-        Text("<$query> 과 관련된 영화")
+        Text(
+            modifier = Modifier.padding(0.dp, 32.dp, 0.dp, 16.dp),
+            text="${query}와 비슷한 콘텐츠",
+            fontSize = 20.sp,
+            fontFamily = nanum,
+            fontWeight = FontWeight.Bold
+        )
         LazyRow(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(200.dp)
+                .wrapContentHeight(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
@@ -116,18 +166,18 @@ fun MovieImage(
     ){
         Box(
             modifier =
-                modifier.height(200.dp)
-                    .clickable { onMovieClick(NavScreen.Detail, movie) }
+            modifier
+                .width(100.dp)
+                .clickable { onMovieClick(NavScreen.Detail, movie) }
         ){
             AsyncImage(
                 model = movie.image,
                 contentDescription = null,
+                contentScale = ContentScale.FillWidth,
                 modifier =
-                    modifier
-                        .height(200.dp)
-                        .width(100.dp)
-                        .fillMaxWidth()
-                        .fillMaxHeight()
+                modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
             )
             IconButton(onClick = {
                 if(isFavorite) viewmodel.deleteFavorite(movie)

@@ -20,7 +20,7 @@ class MovieUseCase @Inject constructor(
         movieRepository.getMovies(query)
             .getOrNull()
             ?.movies
-            ?.singleOrNull()
+            ?.firstOrNull()
 
     fun saveFavorite(movie: Movie){
         movieRepository.saveFavorite(movie)

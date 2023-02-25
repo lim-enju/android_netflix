@@ -8,4 +8,6 @@ object SearchConfig{
     val MOVIE_KEYWORD = arrayListOf(
         "해리포터", "아바타", "스파이더맨", "모험", "사랑"
     )
+
+    val MAIN_MOVIE_KEYWORD = "비긴어게인 2013"
 }

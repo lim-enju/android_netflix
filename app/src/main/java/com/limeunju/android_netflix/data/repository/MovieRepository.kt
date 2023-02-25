@@ -1,6 +1,7 @@
 package com.limeunju.android_netflix.data.repository
 
 import android.net.Uri
+import android.util.Log
 import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.model.response.MovieResponse
@@ -35,7 +36,8 @@ class MovieRepository @Inject constructor(
     ): Result<MovieResponse> =
          movieDataSource.getMovies(query, display, start, yearfrom, yearto)
             .onSuccess { response ->
-                response.movies.removeIf { it.title == null || it.link == null }
+                response.movies.removeIf { it.title.isNullOrBlank() || it.link.isNullOrBlank() || it.image.isNullOrBlank() }
+                response.movies.sortByDescending { it.pubDate }
                 response.movies.forEach { movie ->
                     //태그 제거
                     movie.title = movie.title?.replace("<b>", "")?.replace("</b>", "")
