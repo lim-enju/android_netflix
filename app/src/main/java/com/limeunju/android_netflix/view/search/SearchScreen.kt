@@ -99,9 +99,8 @@ fun SearchBar(
 @Composable
 fun SearchedScreen(
     movie: LazyPagingItems<Movie>,
-    favorites: Map<String, Movie>,
+    favorites: Map<Int, Movie>,
     onMovieClick: (NavScreen, Movie?) -> Unit,
-    viewmodel: SearchViewModel = hiltViewModel(),
 ){
     when(movie.loadState.refresh){
         LoadState.Loading -> {}
@@ -113,7 +112,7 @@ fun SearchedScreen(
                 items(movie.itemCount)
                 { index ->
                     movie[index]?.let {
-                        SearchedItem(it, favorites.keys.contains(it.title), onMovieClick)
+                        SearchedItem(it, favorites.keys.contains(it.fid), onMovieClick)
                     }
                 }
             }

@@ -20,10 +20,10 @@ class MovieRepository @Inject constructor(
         movieDataSource
             .favoriteMovies
             .map {list ->
-                val map = mutableMapOf<String, Movie>()
+                val map = mutableMapOf<Int, Movie>()
                 list
                     .filterNot { it.title.isNullOrBlank()}
-                    .forEach { favorite -> map[favorite.title?:""] = favorite }
+                    .forEach { favorite -> map[favorite.fid] = favorite }
                 map
             }
             .stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), mapOf())

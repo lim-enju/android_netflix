@@ -36,7 +36,7 @@ import com.limeunju.android_netflix.data.model.response.Movie
 fun DetailScreen(title: String, viewmodel: DetailViewModel = hiltViewModel()){
     val movie: Movie? by viewmodel.movie.collectAsState(null)
     val favorites = viewmodel.foavrites.collectAsState(null).value
-    val isFavorite = favorites?.keys?.contains(movie?.title)?:false
+    val isFavorite = favorites?.keys?.contains(movie?.fid)?:false
 
     LaunchedEffect(key1 = title) {
         viewmodel.fetchMovieDetailByTitle(title)

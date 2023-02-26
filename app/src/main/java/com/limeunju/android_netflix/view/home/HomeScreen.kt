@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
@@ -43,15 +44,39 @@ import com.limeunju.android_netflix.common.nanum
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.view.AppBar
 import com.limeunju.android_netflix.view.navigation.NavScreen
+import kotlinx.coroutines.flow.Flow
 
 @Composable
 fun HomeScreen(
     onMovieClick: (NavScreen, Movie?) -> Unit,
-    onSearchClick: (NavScreen) -> Unit
+    onSearchClick: (NavScreen) -> Unit,
+    viewModel: HomeViewModel = hiltViewModel()
+){
+    val mainMovie = viewModel.mainMovie.collectAsState(initial = null).value
+    val recommMovies = viewModel.recomMovies
+    val favorites = viewModel.favorites.collectAsState().value
+
+    HomeScreen(
+        onMovieClick = onMovieClick,
+        onSearchClick = onSearchClick,
+        mainMovie = mainMovie,
+        recommMovies = recommMovies,
+        favorites = favorites
+    )
+
+}
+
+@Composable
+fun HomeScreen(
+    onMovieClick: (NavScreen, Movie?) -> Unit,
+    onSearchClick: (NavScreen) -> Unit,
+    mainMovie: Movie?,
+    recommMovies: Map<String, Flow<PagingData<Movie>>>,
+    favorites: Map<Int, Movie>
 ){
     Column {
         AppBar(
-            title = {Text("")},
+            title = { Text("") },
             actions = {
                 IconButton(onClick = {
                     onSearchClick(NavScreen.Search)
@@ -64,15 +89,25 @@ fun HomeScreen(
                 }
             }
         )
-        MovieList(onMovieClick)
+
+        val scrollState = rememberScrollState()
+        Column (
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .verticalScroll(scrollState)
+        ){
+            MainMovie(mainMovie)
+            MovieList(onMovieClick, recommMovies, favorites)
+        }
+
     }
 }
 
 @Composable
-fun MainMovie(viewmodel: HomeViewModel = hiltViewModel()){
-    val movie = viewmodel.mainMovie.collectAsState(initial = null).value
-    Log.d("EJLIM", "${movie?.title} ${movie?.image}")
-    movie?.let {
+fun MainMovie(mainMovie: Movie?){
+    mainMovie?.let { movie ->
         Column {
             Box(
                 modifier = Modifier
@@ -103,29 +138,29 @@ fun MainMovie(viewmodel: HomeViewModel = hiltViewModel()){
 }
 
 @Composable
-fun MovieList(onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()) {
-    val movies = viewmodel.recomMovies
-
-    val scrollState = rememberScrollState()
-    Column (
-        modifier =
-        Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .verticalScroll(scrollState)
-        ){
-        MainMovie()
-        movies.keys.toList()
-            .forEach {
-                MovieItem(it, onMovieClick)
-            }
+fun MovieList(
+    onMovieClick: (NavScreen, Movie?) -> Unit,
+    movies: Map<String, Flow<PagingData<Movie>>>,
+    favorites: Map<Int, Movie>
+) {
+    movies.forEach { entry ->
+        MovieItem(
+            onMovieClick = onMovieClick,
+            movies = entry,
+            favorites = favorites
+        )
     }
+
 }
 
 @Composable
-fun MovieItem(query: String, onMovieClick: (NavScreen, Movie?) -> Unit, viewmodel: HomeViewModel = hiltViewModel()){
-    val movie: LazyPagingItems<Movie> = viewmodel.recomMovies[query]?.collectAsLazyPagingItems()?:return
-    val favorite = viewmodel.favorites.collectAsState()
+fun MovieItem(
+    onMovieClick: (NavScreen, Movie?) -> Unit,
+    movies: Map.Entry<String, Flow<PagingData<Movie>>>,
+    favorites: Map<Int, Movie>
+){
+    val query = movies.key
+    val movie: LazyPagingItems<Movie> = movies.value.collectAsLazyPagingItems()
 
     Column {
         Text(
@@ -143,7 +178,7 @@ fun MovieItem(query: String, onMovieClick: (NavScreen, Movie?) -> Unit, viewmode
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
-                    MovieImage(item, favorite.value.keys.contains(item.title), onMovieClick)
+                    MovieImage(item, favorites.keys.contains(item.fid), onMovieClick)
                 }
             }
         }
