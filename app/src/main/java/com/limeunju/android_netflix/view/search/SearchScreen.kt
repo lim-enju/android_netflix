@@ -31,6 +31,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.paging.compose.LazyPagingItems
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil.compose.AsyncImage
@@ -43,23 +44,49 @@ import com.limeunju.android_netflix.view.navigation.NavScreen
 fun SearchScreen(viewmodel: SearchViewModel = hiltViewModel(), onMovieClick: (NavScreen, Movie?) -> Unit) {
     //collectAsLazyPagingItems: PagingData의 flow collect
     val movies = viewmodel.searchMovies.collectAsLazyPagingItems()
-    val favorites = viewmodel.favorites.collectAsState()
+    val favorites = viewmodel.favorites.collectAsState().value
+    val query = viewmodel.inputQuery
+
+    SearchScreen(
+        onMovieClick = onMovieClick,
+        movies = movies,
+        favorites = favorites,
+        query = query,
+        onValueChange = { str -> viewmodel.setQuery(str) }
+    )
+}
+
+@Composable
+fun SearchScreen(
+    onMovieClick: (NavScreen, Movie?) -> Unit,
+    movies: LazyPagingItems<Movie>,
+    favorites: Map<Int, Movie>,
+    query: String,
+    onValueChange: (String) -> Unit
+) {
+    //collectAsLazyPagingItems: PagingData의 flow collect
 
     Scaffold(
         topBar = { SearchAppBar() }
     ) { paddingValues ->
         Column() {
             SearchBar(
-                paddingValues = paddingValues
+                paddingValues = paddingValues,
+                query = query,
+                onValueChange = { str -> onValueChange(str) }
             )
-            SearchedScreen(movies, favorites.value, onMovieClick)
+            SearchedScreen(
+                movie = movies,
+                favorites = favorites,
+                onMovieClick = onMovieClick
+            )
         }
     }
-
 }
 
 @Composable
-fun SearchAppBar(){
+fun SearchAppBar(
+){
     AppBar(
         title = {Text("")},
         navigationIcon = {
@@ -73,13 +100,13 @@ fun SearchAppBar(){
 @Composable
 fun SearchBar(
     modifier: Modifier = Modifier,
-    paddingValues: PaddingValues,
-    viewmodel: SearchViewModel = hiltViewModel()
+    query: String,
+    onValueChange :(String)->Unit,
+    paddingValues: PaddingValues
 ) {
-
     TextField(
-        value = viewmodel.inputQuery,
-        onValueChange = viewmodel::setQuery,
+        value = query,
+        onValueChange = onValueChange,
         singleLine = true,
         modifier = modifier
             .fillMaxWidth()
@@ -125,8 +152,8 @@ fun SearchedItem(
     movie: Movie,
     isFavorite: Boolean,
     onMovieClick: (NavScreen, Movie?) -> Unit,
-    viewmodel:SearchViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier)
+    modifier: Modifier = Modifier,
+    viewmodel: SearchViewModel = hiltViewModel())
 {
     Card (
         modifier = modifier
