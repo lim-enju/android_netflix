@@ -11,6 +11,9 @@ import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.usecase.MovieUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,7 +33,10 @@ class SearchViewModel @Inject constructor(
     val favorites = movieUseCase.favorites
     val searchMovies =
         snapshotFlow { inputQuery }
-            .flatMapLatest {
+            .filter { it.isBlank() }
+            .distinctUntilChanged()     //동일한 단어 검색 시 필터링
+            .debounce(2000)     //2초 후에 데이터 흘려보내기
+            .flatMapLatest {    //새로운 플로우 방출 시 이전 플로우 취소
                 movieUseCase.getMoviesPager(inputQuery).cachedIn(viewModelScope)
             }
     fun saveFavorite(movie: Movie){

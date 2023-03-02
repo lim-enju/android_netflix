@@ -1,5 +1,6 @@
 package com.limeunju.android_netflix.data.datasource
 
+import android.util.Log
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.limeunju.android_netflix.data.model.response.Movie
@@ -16,7 +17,7 @@ class MoviePagingSource constructor(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         val nextPageNumber = params.key ?: 1
         val response = movieRepository.getMovies(query, start = nextPageNumber)
-
+        Log.d("EJLIM", "nextPageNumber $nextPageNumber")
         return if(response.isSuccess){
             val data = response.getOrNull()
             LoadResult.Page(
