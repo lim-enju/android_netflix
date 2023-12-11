@@ -36,18 +36,17 @@ import com.limeunju.android_netflix.data.model.response.Movie
 fun DetailScreen(title: String, viewmodel: DetailViewModel = hiltViewModel()){
     val movie: Movie? by viewmodel.movie.collectAsState(null)
     val favorites = viewmodel.foavrites.collectAsState(null).value
-    val isFavorite = favorites?.keys?.contains(movie?.fid)?:false
+    val isFavorite = favorites?.keys?.contains(movie?.id)?:false
 
     LaunchedEffect(key1 = title) {
         viewmodel.fetchMovieDetailByTitle(title)
     }
-    Log.d("EJLIM", "movie ${movie?.link}")
 
-    val webViewState =
-        rememberWebViewState(
-            url = movie?.link?:"",
-            additionalHttpHeaders = emptyMap()
-        )
+//    val webViewState =
+//        rememberWebViewState(
+//            url = movie?.link?:"",
+//            additionalHttpHeaders = emptyMap()
+//        )
 
     movie?.let {
         Column(
@@ -76,7 +75,7 @@ fun MovieInfo(movie: Movie, isFavorite:Boolean, viewmodel: DetailViewModel = hil
             verticalAlignment = Alignment.CenterVertically
         ){
             AsyncImage(
-                model = movie.image,
+                model = movie.posterPath,
                 contentDescription = null,
                 modifier =
                 Modifier
@@ -89,9 +88,7 @@ fun MovieInfo(movie: Movie, isFavorite:Boolean, viewmodel: DetailViewModel = hil
             Column (){
                 Text(text = movie.title?:"")
                 Spacer(modifier = Modifier.height(4.dp))
-                Text(text = movie.subtitle?:"")
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(text = movie.pubDate?:"")
+                Text(text = movie.releaseDate?:"")
             }
         }
 

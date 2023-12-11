@@ -16,14 +16,14 @@ class MoviePagingSource constructor(
     //LoadResult: 로드 작업의 결과
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Movie> {
         val nextPageNumber = params.key ?: 1
-        val response = movieRepository.getMovies(query, start = nextPageNumber)
-        Log.d("EJLIM", "nextPageNumber $nextPageNumber")
+        val response = movieRepository.getMovies(query, page = nextPageNumber)
         return if(response.isSuccess){
-            val data = response.getOrNull()
+            val result = response.getOrNull()
+            val movies = result?.movies?: arrayListOf()
             LoadResult.Page(
-                data = data?.movies?: arrayListOf(),
+                data = movies,
                 prevKey = params.prevKey(),
-                nextKey = params.nextKey(data?.total?:0)
+                nextKey = params.nextKey((result?.page?:0) + 1)
             )
         } else LoadResult.Error(Throwable())
     }

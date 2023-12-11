@@ -139,7 +139,7 @@ fun SearchedScreen(
                 items(movie.itemCount)
                 { index ->
                     movie[index]?.let {
-                        SearchedItem(it, favorites.keys.contains(it.fid), onMovieClick)
+                        SearchedItem(it, favorites.keys.contains(it.id), onMovieClick)
                     }
                 }
             }
@@ -167,7 +167,7 @@ fun SearchedItem(
             .fillMaxWidth()
         ){
             AsyncImage(
-                model = movie.image,
+                model = movie.posterPath,
                 contentDescription = null,
                 modifier =
                 modifier

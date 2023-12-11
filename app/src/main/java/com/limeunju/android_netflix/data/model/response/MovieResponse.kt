@@ -9,20 +9,12 @@ import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
-data class MovieResponse (
-    @SerializedName("lastBuildDate") var lastBuildDate : String? = null,
+data class MovieResponse(
+    @SerializedName("page")
+    var page: Int,
 
-    @SerializedName("total")
-    var total: Int? = null,
-
-    @SerializedName("start")
-    var start: Int? = null,
-
-    @SerializedName("display")
-    var display: Int? = null,
-
-    @SerializedName("items")
-    var movies: ArrayList<Movie> = arrayListOf()
+    @SerializedName("results")
+    var movies: List<Movie> = listOf()
 )
 
 @Entity(tableName = "favorite")
@@ -31,37 +23,21 @@ data class Movie (
 
     @Expose(deserialize = false, serialize = false)
     @PrimaryKey(autoGenerate = true)
-    var fid: Int,
+    var id: Int,
 
     @ColumnInfo("title")
     @SerializedName("title")
     var title: String? = null,
 
-    @ColumnInfo("link")
-    @SerializedName("link")
-    var link: String? = null,
+    @ColumnInfo("poster_path")
+    @SerializedName("poster_path")
+    var posterPath: String? = null,
 
-    @ColumnInfo("image")
-    @SerializedName("image")
-    var image: String? = null,
+    @ColumnInfo("release_date")
+    @SerializedName("release_date")
+    var releaseDate: String? = null,
 
-    @ColumnInfo("subtitle")
-    @SerializedName("subtitle")
-    var subtitle: String? = null,
-
-    @ColumnInfo("pubDate")
-    @SerializedName("pubDate")
-    var pubDate: String? = null,
-
-    @ColumnInfo("director")
-    @SerializedName("director")
-    var director: String? = null,
-
-    @ColumnInfo("actor")
-    @SerializedName("actor")
-    var actor: String? = null,
-
-    @ColumnInfo("userRating")
-    @SerializedName("userRating")
-    var userRating: String? = null
+    @ColumnInfo("popularity")
+    @SerializedName("popularity")
+    var popularity: String? = null
 ): Parcelable

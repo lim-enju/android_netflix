@@ -28,7 +28,7 @@ class DetailViewModel @Inject constructor(
     fun fetchMovieDetailByTitle(title: String){
         viewModelScope.launch (Dispatchers.IO) {
             movieUseCase.getMovie(title)?.let {
-                _movie.emit(it)
+                _movie.emit(it.movies.firstOrNull())
             }
         }
     }

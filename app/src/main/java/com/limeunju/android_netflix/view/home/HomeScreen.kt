@@ -56,6 +56,8 @@ fun HomeScreen(
     val recommMovies = viewModel.recomMovies
     val favorites = viewModel.favorites.collectAsState().value
 
+    Log.d("EJLIM", "home screen reload ${mainMovie?.title}")
+
     HomeScreen(
         onMovieClick = onMovieClick,
         onSearchClick = onSearchClick,
@@ -93,10 +95,10 @@ fun HomeScreen(
         val scrollState = rememberScrollState()
         Column (
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .verticalScroll(scrollState)
+            Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .verticalScroll(scrollState)
         ){
             MainMovie(mainMovie)
             MovieList(onMovieClick, recommMovies, favorites)
@@ -114,8 +116,10 @@ fun MainMovie(mainMovie: Movie?){
                     .fillMaxWidth()
                     .height(LocalConfiguration.current.screenWidthDp.dp)
             ) {
+                Log.d("TAG", "MovieImage: ${movie.posterPath}")
+
                 AsyncImage(
-                    model = movie.image,
+                    model = movie.posterPath,
                     contentDescription = "",
                     contentScale = ContentScale.Crop,
                     modifier = Modifier
@@ -130,9 +134,6 @@ fun MainMovie(mainMovie: Movie?){
                     fontWeight = FontWeight.Bold,
                 )
             }
-            Text(
-                text = movie.actor?:""
-            )
         }
     }
 }
@@ -143,6 +144,7 @@ fun MovieList(
     movies: Map<String, Flow<PagingData<Movie>>>,
     favorites: Map<Int, Movie>
 ) {
+    Log.d("EJLIM", "home screen reload ${movies.size}")
     movies.forEach { entry ->
         MovieItem(
             onMovieClick = onMovieClick,
@@ -178,7 +180,7 @@ fun MovieItem(
         ){
             itemsIndexed(movie) { index, item ->
                 item?.let {
-                    MovieImage(item, favorites.keys.contains(item.fid), onMovieClick)
+                    MovieImage(item, favorites.keys.contains(item.id), onMovieClick)
                 }
             }
         }
@@ -206,7 +208,7 @@ fun MovieImage(
                 .clickable { onMovieClick(NavScreen.Detail, movie) }
         ){
             AsyncImage(
-                model = movie.image,
+                model = movie.posterPath,
                 contentDescription = null,
                 contentScale = ContentScale.FillWidth,
                 modifier =

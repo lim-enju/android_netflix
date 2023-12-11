@@ -22,7 +22,7 @@ import javax.inject.Singleton
 private object ApiModule {
 
     @Provides
-    fun provideBaseUrl() = "https://openapi.naver.com/v1/"
+    fun provideBaseUrl() = "https://api.themoviedb.org/3/"
 
     @Singleton
     @Provides

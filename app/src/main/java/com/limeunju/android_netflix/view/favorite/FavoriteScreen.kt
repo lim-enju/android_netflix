@@ -73,7 +73,7 @@ fun MovieImage(
     ){
         Box(modifier = modifier.height(200.dp)){
             AsyncImage(
-                model = movie.image,
+                model = movie.posterPath,
                 contentDescription = null,
                 modifier =
                 modifier

@@ -19,8 +19,6 @@ class MovieUseCase @Inject constructor(
     suspend fun getMovie(query: String) =
         movieRepository.getMovies(query)
             .getOrNull()
-            ?.movies
-            ?.firstOrNull()
 
     fun saveFavorite(movie: Movie){
         movieRepository.saveFavorite(movie)

@@ -1,7 +1,7 @@
 package com.limeunju.android_netflix.data.repository
 
-import android.net.Uri
 import android.util.Log
+import com.limeunju.android_netflix.BuildConfig
 import com.limeunju.android_netflix.data.datasource.MovieDataSource
 import com.limeunju.android_netflix.data.model.response.Movie
 import com.limeunju.android_netflix.data.model.response.MovieResponse
@@ -11,7 +11,6 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
-
 
 class MovieRepository @Inject constructor(
     private val movieDataSource: MovieDataSource
@@ -23,31 +22,25 @@ class MovieRepository @Inject constructor(
                 val map = mutableMapOf<Int, Movie>()
                 list
                     .filterNot { it.title.isNullOrBlank()}
-                    .forEach { favorite -> map[favorite.fid] = favorite }
+                    .forEach { favorite -> map[favorite.id] = favorite }
                 map
             }
             .stateIn(CoroutineScope(Dispatchers.IO), SharingStarted.WhileSubscribed(), mapOf())
+
     suspend fun getMovies(
         query:String,
         display:Int? = null,
-        start:Int? = null,
-        yearfrom:Int? = null,
-        yearto:Int? = null,
+        page:Int? = null,
     ): Result<MovieResponse> =
-         movieDataSource.getMovies(query, display, start, yearfrom, yearto)
+         movieDataSource.getMovies(query, display, page)
             .onSuccess { response ->
-                response.movies.removeIf { it.title.isNullOrBlank() || it.link.isNullOrBlank() || it.image.isNullOrBlank() }
-                response.movies.sortByDescending { it.pubDate }
-                response.movies.forEach { movie ->
-                    //태그 제거
-                    movie.title = movie.title?.replace("<b>", "")?.replace("</b>", "")
-
-                    //code 분리
-                    val uri = Uri.parse(movie.link)
-                    uri.getQueryParameter("code")?.let {
-                        movie.fid = it.toInt()
+                val movies = ArrayList(response.movies?: listOf())
+                movies.sortByDescending { it.releaseDate }
+                movies.removeIf { it.title.isNullOrEmpty() || it.posterPath.isNullOrEmpty()}
+                movies.map { movie ->
+                        Log.d("TAG", "getMovies: ${movie.title} ${movie.posterPath}")
+                        movie.posterPath = BuildConfig.IMAGE_URL + movie.posterPath
                     }
-                }
             }
             .onFailure {  }
 

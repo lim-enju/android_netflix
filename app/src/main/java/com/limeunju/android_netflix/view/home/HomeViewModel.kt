@@ -26,17 +26,19 @@ class HomeViewModel @Inject constructor(
     //value: 검색된 영화
     val recomMovies = mutableMapOf<String, Flow<PagingData<Movie>>>()
     val favorites = movieUseCase.favorites
-    val mainMovie = flow {
-        val movie = movieUseCase.getMovie(MAIN_MOVIE_KEYWORD)
-        Log.d("EJLIM", "flow ${movie?.title} ${movie?.image}")
-        emit(movie)
-    }
+    var mainMovie: Flow<Movie?>
 
     init {
         MOVIE_KEYWORD
             .forEach {
                 recomMovies[it] = movieUseCase.getMoviesPager(it).cachedIn(viewModelScope)
             }
+
+        mainMovie = flow {
+            val movie = movieUseCase.getMovie(MAIN_MOVIE_KEYWORD)
+            emit(movie?.movies?.firstOrNull())
+            Log.d("TAG", "MovieImage: ${movie?.movies?.firstOrNull()}")
+        }
     }
 
     fun saveFavorite(movie: Movie){
